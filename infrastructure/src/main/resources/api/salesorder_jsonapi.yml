@@ -1,0 +1,149 @@
+openapi: "3.0.0"
+info:
+  title: Paju Sales order API
+  description: API Test
+  version: "1.0.0"
+servers:
+  - url: https://localhost
+paths:
+  /salesorders:
+    get:
+      description: 'Returns all Sales Orders'
+      responses:
+          '200':
+            description: A list of sales orders
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ListOfSalesOrders'
+  /salesorder/{id}:
+    get:
+      description: "Returns one Sales Order"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 'Happy'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesOrder'
+
+components:
+  schemas:
+    ListOfSalesOrders:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+            next:
+              type: string
+            last:
+              type: string
+        data:
+          type: array
+          items:
+            $ref: '#components/schemas/SalesOrder'
+        included:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/Product'
+              - $ref: '#/components/schemas/Customer'
+    OneSalesOrder:
+      type: object
+      properties:
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+            next:
+              type: string
+            last:
+              type: string
+        data:
+          $ref: '#components/schemas/SalesOrder'
+        included:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/Product'
+              - $ref: '#/components/schemas/Customer'
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - unit_price
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: number
+        unit_price:
+          $ref: '#/components/schemas/Price'
+    Price:
+      type: object
+      required:
+        - price
+        - currency
+        - vat
+      properties:
+        price:
+          type: number
+        currency:
+          type: string
+          enum:
+            - eur
+        vat:
+          type: string
+          enum:
+            - vat0
+            - vat14
+            - vat24
+    SalesOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            startTime:
+              type: string
+            endTime:
+              type: string
+        relationships:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/Product'
+              - $ref: '#/components/schemas/Customer'
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            firstName:
+              type: string
+            lastName:
+              type: string
+
